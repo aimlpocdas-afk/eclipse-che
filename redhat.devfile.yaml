@@ -1,0 +1,19 @@
+# File: empty-vscode-redhat.devfile.yaml
+apiVersion: workspace.devfile.io/v1alpha2
+kind: DevWorkspace
+metadata:
+  name: empty-vscode-redhat
+spec:
+  started: true
+  template:
+    components:
+      - name: vscode
+        container:
+          image: quay.io/devfile/universal-developer-image:latest
+          memoryLimit: 512Mi
+          cpuLimit: 250m
+          env:
+            - name: EXTENSIONS_GALLERY
+              value: '{"serviceUrl": "", "allowedExtensions": ["redhat.*"]}'
+    attributes:
+      editor: che-incubator/che-code/latest
