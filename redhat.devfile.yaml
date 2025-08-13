@@ -9,10 +9,30 @@ spec:
       - name: vscode
         container:
           image: quay.io/devfile/universal-developer-image:latest
-          memoryLimit: 512Mi
-          cpuLimit: 250m
+          memoryLimit: 512Mi  # Minimal memory
+          cpuLimit: 250m      # Minimal CPU
+          mountSources: false # No project mounting
           env:
+            # Restrict to RedHat extensions only
             - name: EXTENSIONS_GALLERY
               value: '{"serviceUrl": "", "allowedExtensions": ["redhat.*"]}'
+            # Disable other extension sources
+            - name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
+              value: "false"
+          volumeMounts:
+            - name: extensions
+              path: /tmp/extensions  # Ephemeral storage path
+
+    # Use ephemeral storage to avoid PVC issues
+    volumes:
+      - name: extensions
+        ephemeral: true  # Will not create PVC
+
+    # Explicitly disable persistent storage
     attributes:
       editor: che-incubator/che-code/latest
+      workspace-storage-type: ephemeral  # Critical for avoiding PVC
+      plugins:
+        - editor: che-incubator/che-code/latest
+          cpuRequest: 100m
+          memoryRequest: 256Mi
