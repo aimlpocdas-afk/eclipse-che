@@ -1,7 +1,7 @@
 apiVersion: workspace.devfile.io/v1alpha2
 kind: DevWorkspace
 metadata:
-  name: empty-vscode-redhat
+  name: locked-vscode-redhat-only
 spec:
   started: true
   template:
@@ -9,31 +9,39 @@ spec:
       - name: vscode
         container:
           image: quay.io/devfile/universal-developer-image:latest
-          memoryLimit: 512Mi  # Minimal memory
-          cpuLimit: 250m      # Minimal CPU
-          mountSources: false # No project mounting
+          memoryLimit: 512Mi
+          cpuLimit: 250m
+          mountSources: false
           env:
-            # Restrict to RedHat extensions only
+            # Strict RedHat extension control
             - name: EXTENSIONS_GALLERY
-              value: '{"serviceUrl": "https://pwb.jioma.jio.com/openvsx", "allowedExtensions": ["redhat.*"]}'
-            # Disable other extension sources
+              value: '{
+                "serviceUrl": "https://pwb.jioma.jio.com/openvsx",
+                "itemUrl": "",
+                "resourceUrlTemplate": "",
+                "allowedExtensions": ["^redhat\\..*"]
+              }'
+            
+            # Security lockdown
             - name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
-              value: "true"
+              value: "false"
             - name: NODE_TLS_REJECT_UNAUTHORIZED
-              value: "0"
+              value: "0"  # Bypass SSL for private registry
+
+          # Ephemeral extension storage
           volumeMounts:
-            - name: extensions
-              path: /tmp/extensions  # Ephemeral storage path
+            - name: redhat-extensions
+              path: /home/user/.vscode/extensions
 
-    # Use ephemeral storage to avoid PVC issues
+    # Storage configuration
     volumes:
-      - name: extensions
-        ephemeral: true  # Will not create PVC
+      - name: redhat-extensions
+        ephemeral: true
 
-    # Explicitly disable persistent storage
+    # Workspace attributes
     attributes:
       editor: che-incubator/che-code/latest
-      workspace-storage-type: ephemeral  # Critical for avoiding PVC
+      workspace-storage-type: ephemeral
       plugins:
         - editor: che-incubator/che-code/latest
           cpuRequest: 100m
