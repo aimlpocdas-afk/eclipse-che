@@ -12,13 +12,13 @@ spec:
           memoryLimit: 512Mi  # Minimal memory
           cpuLimit: 250m      # Minimal CPU
           mountSources: false # No project mounting
-          #env:
+          env:
             # Restrict to RedHat extensions only
-            #- name: EXTENSIONS_GALLERY
-            #  value: '{"serviceUrl": "", "allowedExtensions": ["redhat.*"]}'
+            - name: EXTENSIONS_GALLERY
+              value: '{"serviceUrl": "", "allowedExtensions": ["redhat.*"]}'
             # Disable other extension sources
-            #- name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
-            #  value: "false"
+            - name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
+              value: "false"
           volumeMounts:
             - name: extensions
               path: /tmp/extensions  # Ephemeral storage path
