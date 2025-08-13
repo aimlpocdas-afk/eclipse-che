@@ -24,16 +24,13 @@ spec:
               value: "false"
 
     # Empty project definition
-    projects:
-      - name: empty
-        zip:
-          location: https://example.com/empty.zip
+
 
     # Volumes for extension storage
     volumes:
       - name: extensions
         ephemeral: false
-        size: 5Gi
+        size: 1Gi
 
     # Editor selection
     attributes:
@@ -41,4 +38,4 @@ spec:
       plugins:
         - editor: che-incubator/che-code/latest
           cpuLimit: 500m
-          memoryLimit: 1Gi
+          memoryLimit: 256Mi
