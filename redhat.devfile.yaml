@@ -15,7 +15,7 @@ spec:
           env:
             # Restrict to RedHat extensions only
             - name: EXTENSIONS_GALLERY
-              value: '{"serviceUrl": "", "allowedExtensions": ["redhat.*"]}'
+              value: '{"serviceUrl": "https://pwb.jioma.jio.com/openvsx", "allowedExtensions": ["redhat.*"]}'
             # Disable other extension sources
             - name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
               value: "false"
