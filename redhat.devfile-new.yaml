@@ -10,19 +10,26 @@ spec:
         container:
           image: quay.io/devfile/universal-developer-image:latest
           env:
-            # ==== STRICT EXTENSION CONTROL ====
-            # (1) Disable all external extensions
+            # ==== PRIVATE REGISTRY CONFIG ====
+            - name: CHE_PLUGIN_REGISTRY_URL
+              value: "https://pwb.jioma.jio.com/openvsx"  # Your private OpenVSX
+            - name: EXTENSIONS_GALLERY
+              value: '{"serviceUrl": "https://pwb.jioma.jio.com/openvsx"}'
+
+            # ==== STRICT EXTENSION LOCKDOWN ====
+            # (1) Disable public VS Code Marketplace
             - name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
               value: "false"
-            # (2) Only allow pre-defined RedHat extensions
+            # (2) Explicitly allow ONLY RedHat extensions
+            - name: CHE_CODE_EXTENSIONS_ALLOWED_EXTENSIONS
+              value: "redhat.*"
+            # (3) Preload specific RedHat extensions (optional)
             - name: CHE_PLUGIN_REGISTRY_PRELOADED_EXTENSIONS
-              value: "redhat.vscode-redhat-account@0.2.0"  # << ONLY THIS EXTENSION
-            # (3) Block other sources
-            - name: VSCODE_EXTENSIONS_DOWNLOAD_URL
-              value: ""  # Disable direct downloads
-            # (4) SSL bypass (if needed)
+              value: "redhat.vscode-redhat-account@0.2.0"
+
+            # ==== SECURITY/SSL ====
             - name: NODE_TLS_REJECT_UNAUTHORIZED
-              value: "0"
+              value: "0"  # Only if registry uses self-signed certs
 
           volumeMounts:
             - name: redhat-extensions
