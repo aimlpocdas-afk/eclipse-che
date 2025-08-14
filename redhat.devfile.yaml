@@ -19,7 +19,7 @@ spec:
                 "serviceUrl": "https://pwb.jioma.jio.com/openvsx",
                 "itemUrl": "",
                 "resourceUrlTemplate": "",
-                "allowedExtensions": ["^redhat\\..*"]
+                "allowedExtensions": ["@redhat/*"]
               }'
             
             # Security lockdown
