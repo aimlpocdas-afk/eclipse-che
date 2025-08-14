@@ -1,7 +1,7 @@
 apiVersion: workspace.devfile.io/v1alpha2
 kind: DevWorkspace
 metadata:
-  name: locked-vscode-redhat-only
+  name: locked-vscode-redhat-only-new
 spec:
   started: true
   template:
