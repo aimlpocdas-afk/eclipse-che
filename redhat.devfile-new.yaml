@@ -10,26 +10,32 @@ spec:
         container:
           image: quay.io/devfile/universal-developer-image:latest
           env:
-            # ==== PRIVATE REGISTRY CONFIG ====
+            # ==== FORCE PRIVATE REGISTRY ====
             - name: CHE_PLUGIN_REGISTRY_URL
-              value: "https://pwb.jioma.jio.com/openvsx"  # Your private OpenVSX
+              value: "https://pwb.jioma.jio.com/openvsx"  # Explicit registry
             - name: EXTENSIONS_GALLERY
-              value: '{"serviceUrl": "https://pwb.jioma.jio.com/openvsx"}'
+              value: '{
+                "serviceUrl": "https://pwb.jioma.jio.com/openvsx",
+                "itemUrl": "https://pwb.jioma.jio.com/openvsx/api/item",
+                "resourceUrlTemplate": "https://pwb.jioma.jio.com/openvsx/files/{publisher}/{name}/{version}/{path}",
+                "allowedExtensions": ["redhat.*"]
+              }'  # Full OpenVSX-compatible config
 
-            # ==== STRICT EXTENSION LOCKDOWN ====
-            # (1) Disable public VS Code Marketplace
+            # ==== BLOCK PUBLIC SOURCES ====
             - name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
               value: "false"
-            # (2) Explicitly allow ONLY RedHat extensions
+            - name: VSCODE_GALLERY_SERVICE_URL  # Block public VS Code Marketplace
+              value: ""
+
+            # ==== STRICT EXTENSION CONTROL ====
             - name: CHE_CODE_EXTENSIONS_ALLOWED_EXTENSIONS
               value: "redhat.*"
-            # (3) Preload specific RedHat extensions (optional)
             - name: CHE_PLUGIN_REGISTRY_PRELOADED_EXTENSIONS
               value: "redhat.vscode-redhat-account@0.2.0"
 
-            # ==== SECURITY/SSL ====
+            # ==== SSL BYPASS (if needed) ====
             - name: NODE_TLS_REJECT_UNAUTHORIZED
-              value: "0"  # Only if registry uses self-signed certs
+              value: "0"
 
           volumeMounts:
             - name: redhat-extensions
