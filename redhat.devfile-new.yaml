@@ -5,46 +5,30 @@ metadata:
 spec:
   started: true
   template:
+    attributes:
+      pod-overrides:
+        spec:
+          imagePullSecrets:
+            - name: jioma-acr-app-containerization-api   # matches the secret you created
     components:
       - name: vscode
         container:
-          image: quay.io/devfile/universal-developer-image:latest
+          image: jioazurenonprodpnejiomaregistry.azurecr.io/custom-ide/universal8:1.0
           env:
-            # ==== FORCE PRIVATE REGISTRY ====
             - name: CHE_PLUGIN_REGISTRY_URL
-              value: "https://pwb.jioma.jio.com/openvsx"  # Explicit registry
+              value: "https://pwb.jioma.jio.com/openvsx"
             - name: EXTENSIONS_GALLERY
               value: '{
                 "serviceUrl": "https://pwb.jioma.jio.com/openvsx",
                 "itemUrl": "https://pwb.jioma.jio.com/openvsx/api/item",
                 "resourceUrlTemplate": "https://pwb.jioma.jio.com/openvsx/files/{publisher}/{name}/{version}/{path}",
                 "allowedExtensions": ["redhat.*"]
-              }'  # Full OpenVSX-compatible config
-
-            # ==== BLOCK PUBLIC SOURCES ====
+              }'
             - name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
               value: "false"
-            - name: VSCODE_GALLERY_SERVICE_URL  # Block public VS Code Marketplace
+            - name: VSCODE_GALLERY_SERVICE_URL
               value: ""
-
-            # ==== STRICT EXTENSION CONTROL ====
             - name: CHE_CODE_EXTENSIONS_ALLOWED_EXTENSIONS
               value: "redhat.*"
             - name: CHE_PLUGIN_REGISTRY_PRELOADED_EXTENSIONS
               value: "redhat.vscode-redhat-account@0.2.0"
-
-            # ==== SSL BYPASS (if needed) ====
-            - name: NODE_TLS_REJECT_UNAUTHORIZED
-              value: "0"
-
-          volumeMounts:
-            - name: redhat-extensions
-              path: /home/user/.vscode/extensions
-
-    volumes:
-      - name: redhat-extensions
-        ephemeral: true
-
-    attributes:
-      editor: che-incubator/che-code/latest
-      workspace-storage-type: ephemeral
