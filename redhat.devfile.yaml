@@ -19,8 +19,10 @@ spec:
                 "serviceUrl": "https://pwb.jioma.jio.com/openvsx",
                 "itemUrl": "",
                 "resourceUrlTemplate": "",
-                "allowedExtensions": ["@redhat/*"]
+                "allowedExtensions": ["redhat.*"]
               }'
+            - name: CHE_CODE_EXTENSIONS_ALLOWED_EXTENSIONS
+              value: "redhat.*"
             
             # Security lockdown
             - name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
