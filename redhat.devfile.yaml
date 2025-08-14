@@ -9,42 +9,29 @@ spec:
       - name: vscode
         container:
           image: quay.io/devfile/universal-developer-image:latest
-          memoryLimit: 512Mi
-          cpuLimit: 250m
-          mountSources: false
           env:
-            # Strict RedHat extension control
-            - name: EXTENSIONS_GALLERY
-              value: '{
-                "serviceUrl": "https://pwb.jioma.jio.com/openvsx",
-                "itemUrl": "",
-                "resourceUrlTemplate": "",
-                "allowedExtensions": ["redhat.*"]
-              }'
-            - name: CHE_CODE_EXTENSIONS_ALLOWED_EXTENSIONS
-              value: "redhat.*"
-            
-            # Security lockdown
+            # ==== STRICT EXTENSION CONTROL ====
+            # (1) Disable all external extensions
             - name: CHE_CODE__EXTENSIONS_GALLERY__ENABLED
               value: "false"
+            # (2) Only allow pre-defined RedHat extensions
+            - name: CHE_PLUGIN_REGISTRY_PRELOADED_EXTENSIONS
+              value: "redhat.vscode-redhat-account@0.2.0"  # << ONLY THIS EXTENSION
+            # (3) Block other sources
+            - name: VSCODE_EXTENSIONS_DOWNLOAD_URL
+              value: ""  # Disable direct downloads
+            # (4) SSL bypass (if needed)
             - name: NODE_TLS_REJECT_UNAUTHORIZED
-              value: "0"  # Bypass SSL for private registry
+              value: "0"
 
-          # Ephemeral extension storage
           volumeMounts:
             - name: redhat-extensions
               path: /home/user/.vscode/extensions
 
-    # Storage configuration
     volumes:
       - name: redhat-extensions
         ephemeral: true
 
-    # Workspace attributes
     attributes:
       editor: che-incubator/che-code/latest
       workspace-storage-type: ephemeral
-      plugins:
-        - editor: che-incubator/che-code/latest
-          cpuRequest: 100m
-          memoryRequest: 256Mi
